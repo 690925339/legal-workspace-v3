@@ -11,6 +11,8 @@ import CaseForm from './views/CaseForm.js';
 import ContractReview from './views/ContractReview.js';
 import LegalResearch from './views/LegalResearch.js';
 
+import Settings from './views/Settings.js';
+
 const { createApp } = Vue;
 
 const App = {
@@ -40,6 +42,9 @@ const App = {
             }
             if (path === '/legal-research') {
                 return 'LegalResearch';
+            }
+            if (path === '/settings') {
+                return 'Settings';
             }
             if (path.startsWith('/detail')) {
                 return 'CaseDetail';
@@ -78,7 +83,8 @@ const App = {
         Register,
         CaseForm,
         ContractReview,
-        LegalResearch
+        LegalResearch,
+        Settings
     },
     template: `
         <div id="app">
@@ -111,6 +117,7 @@ app.component('ContractReview', ContractReview);
 app.component('LegalResearch', LegalResearch);
 app.component('EvidenceUpload', EvidenceUpload);
 app.component('DocGenerate', DocGenerate);
+app.component('Settings', Settings);
 
 // 挂载应用
 app.mount('#app');

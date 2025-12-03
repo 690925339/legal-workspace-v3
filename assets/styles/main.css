@@ -63,6 +63,77 @@ body {
     flex-direction: column;
     padding: 24px 16px;
     flex-shrink: 0;
+    transition: width 0.3s ease, padding 0.3s ease;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+    padding: 24px 12px;
+}
+
+.sidebar.collapsed .brand {
+    justify-content: center;
+    padding: 0;
+}
+
+.sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 12px 0;
+}
+
+.sidebar.collapsed .nav-item i {
+    margin-right: 0;
+    font-size: 18px;
+}
+
+.sidebar.collapsed .user-profile {
+    justify-content: center;
+    padding: 8px 0;
+}
+
+.sidebar.collapsed .user-avatar {
+    margin-right: 0;
+}
+
+.collapse-btn {
+    margin-left: auto;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-tertiary);
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.sidebar.collapsed .collapse-btn {
+    opacity: 0;
+    pointer-events: none;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.sidebar.collapsed .brand {
+    position: relative;
+}
+
+.sidebar.collapsed .brand-icon {
+    transition: opacity 0.3s ease;
+}
+
+.sidebar.collapsed .brand:hover .brand-icon {
+    opacity: 0;
+}
+
+.sidebar.collapsed .brand:hover .collapse-btn {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .brand {
@@ -567,109 +638,84 @@ body {
 
 .timeline {
     position: relative;
-    padding: 10px 0 10px 40px;
-    /* Remove default border, use pseudo element for better control */
-    border-left: none;
+    padding: 20px 0 20px 20px;
+    border-left: 2px solid #f0f0f0;
+    margin-left: 10px;
 }
 
-/* The vertical line */
 .timeline::before {
-    content: '';
-    position: absolute;
-    left: 11px;
-    /* Center with 24px dot */
-    top: 0;
-    bottom: 0;
-    width: 2px;
-    background: #e5e5e5;
+    display: none;
+    /* Remove the old pseudo-element line */
 }
 
 .timeline-item {
     position: relative;
-    margin-bottom: 32px;
+    margin-bottom: 40px;
 }
 
 .timeline-item:last-child {
     margin-bottom: 0;
 }
 
-/* The Dot */
 .timeline-dot {
     position: absolute;
-    left: -40px;
-    /* Relative to content padding-left 40px, needs to align with line at left 11px. 
-                   Content starts at 40px. Line is at 11px. 
-                   Dot is 24px wide. Center of dot should be at 12px.
-                   So left should be 12px - 12px = 0px relative to container? 
-                   Wait, timeline-item is inside timeline. 
-                   Let's position dot relative to timeline-item which is block.
-                   Actually, let's use the padding of timeline.
-                   Timeline has padding-left: 40px. Line is at 11px (absolute to timeline).
-                   Timeline item is inside.
-                   Dot needs to be at left: -29px relative to item? 
-                   Let's adjust. */
-    left: -29px;
+    left: -27px;
+    /* Align with border-left (-20px padding - 2px border - 5px half dot) */
     top: 0;
-    width: 24px;
-    height: 24px;
-    background: #ffffff;
-    border: 2px solid #e5e5e5;
+    width: 12px;
+    height: 12px;
     border-radius: 50%;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
+    background: #fff;
+    border: 2px solid #d1d5db;
+    transition: all 0.2s ease;
 }
 
-/* Active State Dot */
 .timeline-item.active .timeline-dot {
     background: #1a1a1a;
     border-color: #1a1a1a;
     box-shadow: 0 0 0 4px rgba(26, 26, 26, 0.1);
 }
 
-/* Inner dot for active state */
-.timeline-item.active .timeline-dot::after {
+/* Inner dot for active state - removed as per new minimalist design */
+/* .timeline-item.active .timeline-dot::after {
     content: '';
     width: 8px;
     height: 8px;
     background: #ffffff;
     border-radius: 50%;
-}
+} */
 
-/* Content Card */
-.timeline-content {
+/* Content Card - removed as per new minimalist design */
+/* .timeline-content {
     background: #ffffff;
     border: 1px solid #e5e5e5;
     border-radius: 8px;
     padding: 20px;
     transition: all 0.3s ease;
-}
+} */
 
-.timeline-item.active .timeline-content {
+/* .timeline-item.active .timeline-content {
     border-color: #1a1a1a;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
+} */
 
-.timeline-title {
-    font-size: 16px;
-    font-weight: 600;
-    color: #1a1a1a;
-    margin-bottom: 8px;
+.timeline-content {
+    padding-left: 10px;
 }
 
 .timeline-date {
-    font-size: 13px;
-    color: #666;
-    margin-bottom: 12px;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #f5f5f5;
-    display: inline-block;
-    padding: 4px 8px;
-    border-radius: 4px;
+    font-size: 12px;
+    color: #9ca3af;
+    margin-bottom: 4px;
+    font-family: 'Monaco', 'Consolas', monospace;
+    /* Monospace for dates looks technical/minimal */
+}
+
+.timeline-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin-bottom: 6px;
 }
 
 .timeline-desc {

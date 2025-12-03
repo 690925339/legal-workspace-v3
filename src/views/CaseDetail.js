@@ -703,10 +703,7 @@ export default {
                     <span class="current">{{ caseData.id }}</span>
                 </div>
                 <div class="top-actions">
-                    <button class="icon-btn"><i class="fas fa-search"></i></button>
-                    <button class="icon-btn"><i class="fas fa-bell"></i></button>
                     <button class="icon-btn" @click="editCase" title="编辑案件"><i class="fas fa-edit"></i></button>
-                    <button class="icon-btn"><i class="fas fa-cog"></i></button>
                 </div>
             </header>
 
@@ -1360,89 +1357,38 @@ export default {
                             <div class="timeline-item active">
                                 <div class="timeline-dot"></div>
                                 <div class="timeline-content">
-                                    <div class="timeline-title">案件立项</div>
                                     <div class="timeline-date">2023-10-01</div>
+                                    <div class="timeline-title">案件立项</div>
                                     <div class="timeline-desc">案件正式受理，开始准备相关材料</div>
                                 </div>
                             </div>
                             <div class="timeline-item active">
                                 <div class="timeline-dot"></div>
                                 <div class="timeline-content">
-                                    <div class="timeline-title">证据收集</div>
                                     <div class="timeline-date">2023-10-15 - 进行中</div>
+                                    <div class="timeline-title">证据收集</div>
                                     <div class="timeline-desc">收集合同原件、转账记录等关键证据</div>
                                 </div>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <div class="timeline-content">
-                                    <div class="timeline-title">起诉状撰写</div>
                                     <div class="timeline-date">待开始</div>
+                                    <div class="timeline-title">起诉状撰写</div>
                                     <div class="timeline-desc">准备起诉状及相关法律文书</div>
                                 </div>
                             </div>
                             <div class="timeline-item">
                                 <div class="timeline-dot"></div>
                                 <div class="timeline-content">
-                                    <div class="timeline-title">法院立案</div>
                                     <div class="timeline-date">预计 2023-12-01</div>
+                                    <div class="timeline-title">法院立案</div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                                        即将上线
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!-- Generated Documents List -->
-                    <div class="modern-card" style="margin-top: 24px;">
-                        <div class="card-header">
-                            <div class="card-title">
-                                <i class="fas fa-folder-open" style="margin-right: 8px;"></i>
-                                已生成文书
-                            </div>
-                        </div>
-                        <div class="table-container" style="margin-top: 20px;">
-                            <table class="modern-table">
-                                <thead>
-                                    <tr>
-                                        <th width="40%">文书名称</th>
-                                        <th width="15%">类型</th>
-                                        <th width="20%">生成时间</th>
-                                        <th width="10%">状态</th>
-                                        <th width="15%">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div style="display: flex; align-items: center; gap: 10px;">
-                                                <i class="fas fa-file-alt" style="color: #4f46e5;"></i>
-                                                <span style="font-weight: 500;">民事起诉状_张三诉某科技公司.docx</span>
-                                            </div>
-                                        </td>
-                                        <td>起诉状</td>
-                                        <td>2023-11-20 14:30</td>
-                                        <td>
-                                            <span class="status-badge-sm success">已完成</span>
-                                        </td>
-                                        <td>
-                                            <div style="display: flex; gap: 8px;">
-                                                <button class="icon-btn-sm" title="预览"><i class="fas fa-eye"></i></button>
-                                                <button class="icon-btn-sm" title="编辑"><i class="fas fa-edit"></i></button>
-                                                <button class="icon-btn-sm" title="下载"><i class="fas fa-download"></i></button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
             <!-- Case Form Modal -->
             <CaseForm 
