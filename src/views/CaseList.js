@@ -59,6 +59,24 @@ export default {
                         { name: '李', color: '#fce7f3', textColor: '#9d174d' }
                     ],
                     lastUpdate: '2023-10-20'
+                },
+                {
+                    id: 4,
+                    name: '某科技公司 知识产权纠纷案',
+                    code: 'CASE-2023-004',
+                    type: '民事 · 知识产权',
+                    client: '某科技公司',
+                    opposingParty: '待确定',
+                    court: '待确定',
+                    filingDate: '-',
+                    amount: '待评估',
+                    description: '客户咨询中，尚未签订委托合同。',
+                    status: 'unsigned',
+                    statusText: '未签约',
+                    assignees: [
+                        { name: '张', color: '#dbeafe', textColor: '#1e40af' }
+                    ],
+                    lastUpdate: '1小时前'
                 }
             ],
             searchQuery: ''
