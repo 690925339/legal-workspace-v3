@@ -246,6 +246,20 @@ export default {
                     { source: 'xyz-company', target: 'bank', relation: '收款', amount: '200,000' }
                 ],
                 selectedNode: null
+            },
+            // Section-specific edit modals
+            showBasicInfoModal: false,
+            showCaseFactsModal: false,
+            showFinancialsModal: false,
+            editForm: {},
+            // Contact person
+            showContactModal: false,
+            contactData: {
+                name: '王经理',
+                role: '主要联络人',
+                phone: '138-0000-1234',
+                email: 'wang@abc.com',
+                address: '上海市浦东新区...'
             }
         };
     },
@@ -783,6 +797,66 @@ export default {
         },
         selectNode(node) {
             this.relationshipData.selectedNode = node;
+        },
+        // Section-specific edit methods
+        editBasicInfo() {
+            this.editForm = {
+                name: this.caseData.name,
+                id: this.caseData.id,
+                type: this.caseData.type,
+                category: this.caseData.category,
+                court: this.caseData.court,
+                filingDate: this.caseData.filingDate,
+                status: this.caseData.status
+            };
+            this.showBasicInfoModal = true;
+        },
+        saveBasicInfo() {
+            // Update caseData with editForm values
+            this.caseData.name = this.editForm.name;
+            this.caseData.id = this.editForm.id;
+            this.caseData.type = this.editForm.type;
+            this.caseData.category = this.editForm.category;
+            this.caseData.court = this.editForm.court;
+            this.caseData.filingDate = this.editForm.filingDate;
+            this.caseData.status = this.editForm.status;
+            this.showBasicInfoModal = false;
+            alert('基础信息已更新');
+        },
+        editCaseFacts() {
+            this.editForm = {
+                description: this.caseData.description || '',
+                disputeFocus: '软件是否已实际交付, 质量验收是否合格, 违约损失金额',
+                objective: '支付剩余款项50万元 + 违约金8万元 + 利息'
+            };
+            this.showCaseFactsModal = true;
+        },
+        saveCaseFacts() {
+            this.caseData.description = this.editForm.description;
+            this.showCaseFactsModal = false;
+            alert('案情描述已更新');
+        },
+        editFinancials() {
+            this.editForm = {
+                amount: this.caseData.amount || '',
+                attorneyFee: '85,000',
+                courtCost: '11,300',
+                billableHours: '45.5'
+            };
+            this.showFinancialsModal = true;
+        },
+        saveFinancials() {
+            this.caseData.amount = this.editForm.amount;
+            this.showFinancialsModal = false;
+            alert('财务信息已更新');
+        },
+        // Contact person methods
+        editContact() {
+            this.showContactModal = true;
+        },
+        saveContact() {
+            this.showContactModal = false;
+            alert('联络人信息已更新');
         }
     },
     template: `
@@ -797,7 +871,7 @@ export default {
                     <span class="current">{{ caseData.id }}</span>
                 </div>
                 <div class="top-actions">
-                    <button class="icon-btn" @click="editCase" title="编辑案件"><i class="fas fa-edit"></i></button>
+                    <!-- Edit button removed -->
                 </div>
             </header>
 
@@ -863,7 +937,7 @@ export default {
                         <div class="modern-card">
                             <div class="card-header">
                                 <div class="card-title">基础信息</div>
-                                <button class="icon-btn" style="font-size: 14px;">
+                                <button class="icon-btn" style="font-size: 14px;" @click="editBasicInfo">
                                     <i class="fas fa-pen"></i>
                                 </button>
                             </div>
@@ -909,8 +983,8 @@ export default {
                         <div class="modern-card">
                             <div class="card-header">
                                 <div class="card-title">联络人</div>
-                                <button class="icon-btn" style="font-size: 14px;">
-                                    <i class="fas fa-plus"></i>
+                                <button class="icon-btn" style="font-size: 14px;" @click="editContact">
+                                    <i class="fas fa-pen"></i>
                                 </button>
                             </div>
                             <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 20px;">
@@ -918,21 +992,21 @@ export default {
                                     <i class="fas fa-user"></i>
                                 </div>
                                 <div>
-                                    <div style="font-weight: 600; font-size: 16px;">王经理</div>
-                                    <div style="color: var(--text-secondary); font-size: 13px;">主要联络人</div>
+                                    <div style="font-weight: 600; font-size: 16px;">{{ contactData.name }}</div>
+                                    <div style="color: var(--text-secondary); font-size: 13px;">{{ contactData.role }}</div>
                                 </div>
                             </div>
                             <div class="info-row">
                                 <span class="label">电话</span>
-                                <span class="value">138-0000-1234</span>
+                                <span class="value">{{ contactData.phone }}</span>
                             </div>
                             <div class="info-row">
                                 <span class="label">邮箱</span>
-                                <span class="value">wang@abc.com</span>
+                                <span class="value">{{ contactData.email }}</span>
                             </div>
                             <div class="info-row">
                                 <span class="label">地址</span>
-                                <span class="value">上海市浦东新区...</span>
+                                <span class="value">{{ contactData.address }}</span>
                             </div>
                         </div>
 
@@ -973,7 +1047,7 @@ export default {
                     <div class="modern-card">
                         <div class="card-header">
                             <div class="card-title">案情描述</div>
-                            <button class="icon-btn" style="font-size: 14px;">
+                            <button class="icon-btn" style="font-size: 14px;" @click="editCaseFacts">
                                 <i class="fas fa-pen"></i>
                             </button>
                         </div>
@@ -1171,8 +1245,8 @@ export default {
                     <div class="modern-card">
                         <div class="card-header">
                             <div class="card-title">财务信息</div>
-                            <button class="icon-btn" style="font-size: 14px;">
-                                <i class="fas fa-calculator"></i>
+                            <button class="icon-btn" style="font-size: 14px;" @click="editFinancials">
+                                <i class="fas fa-pen"></i>
                             </button>
                         </div>
                         <div class="info-row">
@@ -1206,23 +1280,18 @@ export default {
 
                 <!-- Tab: AI Analysis -->
                 <div v-if="activeTab === 'ai-analysis'" class="tab-pane">
-                    <div class="modern-card">
-                        <div class="card-header" style="background: #1a1a1a; color: white; margin: -20px; margin-bottom: 20px; padding: 20px; border-radius: 12px 12px 0 0;">
-                            <div class="card-title" style="color: white;">
-                                <i class="fas fa-brain" style="margin-right: 8px;"></i>
-                                AI智能分析
-                            </div>
-                            <button class="icon-btn" style="font-size: 14px; color: white; border-color: rgba(255,255,255,0.3);">
-                                <i class="fas fa-sync-alt"></i>
-                            </button>
-                        </div>
-                        <div class="info-row">
+                    <div class="modern-card" style="position: relative;">
+                        <button class="smart-btn-secondary" style="position: absolute; top: 20px; right: 20px;" title="刷新分析">
+                            <i class="fas fa-sync-alt"></i> 刷新分析
+                        </button>
+                        <div class="info-row" style="display: block;">
                             <span class="label">胜诉率预测</span>
-                            <div style="display: flex; align-items: center; gap: 12px;">
-                                <div style="flex: 1; height: 8px; background: #e5e5e5; border-radius: 4px; overflow: hidden;">
-                                    <div style="width: 75%; height: 100%; background: #1a1a1a;"></div>
-                                </div>
-                                <span class="value" style="color: #1a1a1a; font-weight: 600; font-size: 18px;">75%</span>
+                            <div style="margin-top: 10px; display: flex; align-items: baseline;">
+                                <span class="value" style="color: #1a1a1a; font-weight: 700; font-size: 48px; line-height: 1;">75%</span>
+                                <span style="margin-left: 12px; color: #666; font-size: 14px;">(基于现有证据分析)</span>
+                            </div>
+                            <div style="margin-top: 12px; height: 12px; background: #e5e5e5; border-radius: 6px; overflow: hidden;">
+                                <div style="width: 75%; height: 100%; background: #1a1a1a;"></div>
                             </div>
                         </div>
                         <div class="info-row" style="display: block; margin-top: 16px;">
@@ -1248,26 +1317,40 @@ export default {
                 </div>
 
                 <!-- Tab: AI Assistant -->
-                <div v-if="activeTab === 'ai-assistant'" class="tab-pane" style="height: calc(100vh - 300px); display: flex; flex-direction: column;">
+                <div v-if="activeTab === 'ai-assistant'" class="tab-pane" style="height: calc(100vh - 180px); display: flex; flex-direction: column;">
                     <!-- Chat Messages -->
-                    <div style="flex: 1; overflow-y: auto; padding: 24px; background: #fafafa;">
+                    <div style="flex: 1; overflow-y: auto; padding: 24px; background: #fafafa;" ref="chatContainer">
                         <div v-for="msg in aiAssistant.messages" :key="msg.id" 
                              :style="{
                                  display: 'flex',
                                  justifyContent: msg.role === 'user' ? 'flex-end' : 'flex-start',
-                                 marginBottom: '16px'
+                                 marginBottom: '20px',
+                                 alignItems: 'flex-start'
                              }">
+                            <!-- AI Avatar -->
+                            <div v-if="msg.role === 'ai'" style="width: 36px; height: 36px; border-radius: 50%; background: #e0e7ff; color: #4f46e5; display: flex; align-items: center; justify-content: center; margin-right: 12px; flex-shrink: 0;">
+                                <i class="fas fa-robot"></i>
+                            </div>
+
+                            <!-- Message Bubble -->
                             <div :style="{
                                 maxWidth: '70%',
-                                padding: '12px 16px',
+                                padding: '14px 18px',
                                 borderRadius: '12px',
+                                borderTopLeftRadius: msg.role === 'ai' ? '2px' : '12px',
+                                borderTopRightRadius: msg.role === 'user' ? '2px' : '12px',
                                 background: msg.role === 'user' ? '#1a1a1a' : '#ffffff',
                                 color: msg.role === 'user' ? '#ffffff' : '#1a1a1a',
                                 fontSize: '14px',
                                 lineHeight: '1.6',
-                                boxShadow: '0 2px 4px rgba(0,0,0,0.05)'
+                                boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
                             }">
                                 {{ msg.content }}
+                            </div>
+
+                            <!-- User Avatar -->
+                            <div v-if="msg.role === 'user'" style="width: 36px; height: 36px; border-radius: 50%; background: #f3f4f6; color: #666; display: flex; align-items: center; justify-content: center; margin-left: 12px; flex-shrink: 0;">
+                                <i class="fas fa-user"></i>
                             </div>
                         </div>
                     </div>
@@ -1678,7 +1761,155 @@ export default {
                     </div>
                     <div class="modal-footer">
                         <button class="smart-btn-secondary" @click="showStakeholderModal = false">取消</button>
-                        <button class="smart-btn-primary" @click="saveStakeholder">保存</button>
+                        <button class="smart-btn-primary" @click="saveStakeholder"><i class="fas fa-save"></i> 保存</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Basic Info Edit Modal -->
+            <div v-if="showBasicInfoModal" class="modal-overlay" @click.self="showBasicInfoModal = false">
+                <div class="modal-container" style="width: 600px;">
+                    <div class="modal-header">
+                        <div class="modal-title">编辑基础信息</div>
+                        <button class="modal-close" @click="showBasicInfoModal = false">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="smart-form-group">
+                            <label class="smart-label required">案件名称</label>
+                            <input type="text" class="smart-input" v-model="editForm.name" placeholder="请输入案件名称">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">案件编号</label>
+                            <input type="text" class="smart-input" v-model="editForm.id" placeholder="请输入案件编号">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">案由</label>
+                            <input type="text" class="smart-input" v-model="editForm.type" placeholder="请输入案由">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">具体案由</label>
+                            <input type="text" class="smart-input" v-model="editForm.category" placeholder="请输入具体案由">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">管辖法院/仲裁委</label>
+                            <input type="text" class="smart-input" v-model="editForm.court" placeholder="请输入管辖法院或仲裁委">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">立案日期</label>
+                            <input type="date" class="smart-input" v-model="editForm.filingDate">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">案件状态</label>
+                            <input type="text" class="smart-input" v-model="editForm.status" placeholder="请输入案件状态">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="smart-btn-secondary" @click="showBasicInfoModal = false">取消</button>
+                        <button class="smart-btn-primary" @click="saveBasicInfo"><i class="fas fa-save"></i> 保存</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Case Facts Edit Modal -->
+            <div v-if="showCaseFactsModal" class="modal-overlay" @click.self="showCaseFactsModal = false">
+                <div class="modal-container" style="width: 700px;">
+                    <div class="modal-header">
+                        <div class="modal-title">编辑案情描述</div>
+                        <button class="modal-close" @click="showCaseFactsModal = false">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="smart-form-group">
+                            <label class="smart-label">案情摘要</label>
+                            <textarea class="smart-textarea" v-model="editForm.description" rows="6" placeholder="请详细描述案件的基本情况" style="border: 1px solid #ccc;"></textarea>
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">争议焦点</label>
+                            <textarea class="smart-textarea" v-model="editForm.disputeFocus" rows="4" placeholder="请输入案件的主要争议焦点" style="border: 1px solid #ccc;"></textarea>
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">客户诉求</label>
+                            <textarea class="smart-textarea" v-model="editForm.objective" rows="3" placeholder="请输入客户的诉讼目标和诉求" style="border: 1px solid #ccc;"></textarea>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="smart-btn-secondary" @click="showCaseFactsModal = false">取消</button>
+                        <button class="smart-btn-primary" @click="saveCaseFacts"><i class="fas fa-save"></i> 保存</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Financials Edit Modal -->
+            <div v-if="showFinancialsModal" class="modal-overlay" @click.self="showFinancialsModal = false">
+                <div class="modal-container" style="width: 600px;">
+                    <div class="modal-header">
+                        <div class="modal-title">编辑财务信息</div>
+                        <button class="modal-close" @click="showFinancialsModal = false">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="smart-form-group">
+                            <label class="smart-label">诉讼标的额</label>
+                            <input type="text" class="smart-input" v-model="editForm.amount" placeholder="请输入诉讼标的额">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">律师费报价</label>
+                            <input type="text" class="smart-input" v-model="editForm.attorneyFee" placeholder="请输入律师费报价">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">预估诉讼费</label>
+                            <input type="text" class="smart-input" v-model="editForm.courtCost" placeholder="请输入预估诉讼费">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">计费时长（小时）</label>
+                            <input type="text" class="smart-input" v-model="editForm.billableHours" placeholder="请输入计费时长">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="smart-btn-secondary" @click="showFinancialsModal = false">取消</button>
+                        <button class="smart-btn-primary" @click="saveFinancials"><i class="fas fa-save"></i> 保存</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Person Edit Modal -->
+            <div v-if="showContactModal" class="modal-overlay" @click.self="showContactModal = false">
+                <div class="modal-container" style="width: 600px;">
+                    <div class="modal-header">
+                        <div class="modal-title">编辑联络人</div>
+                        <button class="modal-close" @click="showContactModal = false">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="smart-form-group">
+                            <label class="smart-label required">姓名</label>
+                            <input type="text" class="smart-input" v-model="contactData.name" placeholder="请输入联络人姓名">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">职位/角色</label>
+                            <input type="text" class="smart-input" v-model="contactData.role" placeholder="请输入职位或角色">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">电话</label>
+                            <input type="text" class="smart-input" v-model="contactData.phone" placeholder="请输入联系电话">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">邮箱</label>
+                            <input type="email" class="smart-input" v-model="contactData.email" placeholder="请输入邮箱地址">
+                        </div>
+                        <div class="smart-form-group">
+                            <label class="smart-label">地址</label>
+                            <input type="text" class="smart-input" v-model="contactData.address" placeholder="请输入联系地址">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="smart-btn-secondary" @click="showContactModal = false">取消</button>
+                        <button class="smart-btn-primary" @click="saveContact"><i class="fas fa-save"></i> 保存</button>
                     </div>
                 </div>
             </div>

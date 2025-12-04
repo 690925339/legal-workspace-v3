@@ -1,13 +1,18 @@
 // Sidebar v2.0 - 包含文书生成功能
 import { router } from '../../router.js';
+import ProductFeedback from '../../views/ProductFeedback.js';
 
 export default {
     name: 'Sidebar',
+    components: {
+        ProductFeedback
+    },
     data() {
         return {
             currentPath: window.location.hash.slice(1) || '/',
             showUserMenu: false,
-            isCollapsed: false
+            isCollapsed: false,
+            showFeedbackModal: false
         };
     },
     mounted() {
@@ -107,20 +112,8 @@ export default {
                         <i class="fas fa-user-circle" style="width: 20px; margin-right: 8px; color: #666;"></i>
                         个人资料
                     </a>
-                    <a @click.prevent="navigate('/notifications')" class="menu-item" style="
-                        display: flex;
-                        align-items: center;
-                        padding: 10px 16px;
-                        color: #1a1a1a;
-                        text-decoration: none;
-                        font-size: 14px;
-                        cursor: pointer;
-                        transition: background 0.2s;
-                    " onmouseover="this.style.background='#f5f5f5'" onmouseout="this.style.background='transparent'">
-                        <i class="fas fa-bell" style="width: 20px; margin-right: 8px; color: #666;"></i>
-                        站内信
-                    </a>
-                    <a @click.prevent="navigate('/help')" class="menu-item" style="
+
+                    <a href="https://ai.feishu.cn/wiki/CBlfwahuAiecuRk9yvucFTx8n5b?from=from_copylink" target="_blank" @click="showUserMenu = false" class="menu-item" style="
                         display: flex;
                         align-items: center;
                         padding: 10px 16px;
@@ -133,7 +126,7 @@ export default {
                         <i class="fas fa-question-circle" style="width: 20px; margin-right: 8px; color: #666;"></i>
                         帮助文档
                     </a>
-                    <a @click.prevent="navigate('/feedback')" class="menu-item" style="
+                    <a @click.prevent="showFeedbackModal = true; showUserMenu = false" class="menu-item" style="
                         display: flex;
                         align-items: center;
                         padding: 10px 16px;
@@ -172,6 +165,12 @@ export default {
                     </div>
                 </a>
             </div>
+            
+            <!-- Feedback Modal -->
+            <ProductFeedback 
+                :visible="showFeedbackModal" 
+                @close="showFeedbackModal = false"
+            />
         </aside>
     `
 };

@@ -22,17 +22,16 @@ export default {
                 caseStage: '',
                 court: '',
                 judge: '',
-                filingDate: new Date().toISOString().split('T')[0],
+                filingDate: '',
                 deadline: '',
 
                 // 当事人信息
-                clientName: '',
-                clientType: 'individual',
-                clientId: '',
-                opposingName: '',
-                opposingType: 'company',
-                opposingRep: '',
-                opposingCounsel: '',
+                clients: [
+                    { name: '', type: 'individual', id: '' }
+                ],
+                opposingParties: [
+                    { name: '', type: 'company', rep: '', counsel: '' }
+                ],
 
                 // 案情描述
                 description: '', // 案情摘要
@@ -43,7 +42,14 @@ export default {
                 amount: '',
                 attorneyFee: '',
                 courtCost: '',
-                billableHours: ''
+                billableHours: '',
+
+                // 联络人信息
+                contactName: '',
+                contactRole: '',
+                contactPhone: '',
+                contactEmail: '',
+                contactAddress: ''
             }
         };
     },
@@ -66,10 +72,12 @@ export default {
     methods: {
         resetForm() {
             this.form = {
-                name: '', caseId: '', type: '', legalCause: '', caseStage: '', court: '', judge: '', filingDate: new Date().toISOString().split('T')[0], deadline: '',
-                clientName: '', clientType: 'individual', clientId: '', opposingName: '', opposingType: 'company', opposingRep: '', opposingCounsel: '',
+                name: '', caseId: '', type: '', legalCause: '', caseStage: '', court: '', judge: '', filingDate: '', deadline: '',
+                clients: [{ name: '', type: 'individual', id: '' }],
+                opposingParties: [{ name: '', type: 'company', rep: '', counsel: '' }],
                 description: '', disputeFocus: '', objective: '',
-                amount: '', attorneyFee: '', courtCost: '', billableHours: ''
+                amount: '', attorneyFee: '', courtCost: '', billableHours: '',
+                contactName: '', contactRole: '', contactPhone: '', contactEmail: '', contactAddress: ''
             };
         },
         loadCaseData(id) {
@@ -88,13 +96,12 @@ export default {
                 deadline: '2024-10-01',
 
                 // 当事人信息
-                clientName: 'ABC 公司',
-                clientType: 'company',
-                clientId: '91310000XXXXXXXXXX',
-                opposingName: 'XYZ 有限公司',
-                opposingType: 'company',
-                opposingRep: '李四',
-                opposingCounsel: '王律师',
+                clients: [
+                    { name: 'ABC 公司', type: 'company', id: '91310000XXXXXXXXXX' }
+                ],
+                opposingParties: [
+                    { name: 'XYZ 有限公司', type: 'company', rep: '李四', counsel: '王律师' }
+                ],
 
                 // 案情描述
                 description: '因被告未按合同约定支付广告费用引发的纠纷。',
@@ -107,6 +114,22 @@ export default {
                 courtCost: '8,800.00',
                 billableHours: '12.5'
             };
+        },
+        addClient() {
+            this.form.clients.push({ name: '', type: 'individual', id: '' });
+        },
+        removeClient(index) {
+            if (this.form.clients.length > 1) {
+                this.form.clients.splice(index, 1);
+            }
+        },
+        addOpposingParty() {
+            this.form.opposingParties.push({ name: '', type: 'company', rep: '', counsel: '' });
+        },
+        removeOpposingParty(index) {
+            if (this.form.opposingParties.length > 1) {
+                this.form.opposingParties.splice(index, 1);
+            }
         },
         saveCase() {
             if (!this.validateForm()) return;
@@ -127,7 +150,23 @@ export default {
         validateForm() {
             if (!this.form.name) { alert('请输入案件名称'); return false; }
             if (!this.form.type) { alert('请选择案件类型'); return false; }
-            if (!this.form.filingDate) { alert('请选择立案日期'); return false; }
+
+            // Validate clients
+            for (let i = 0; i < this.form.clients.length; i++) {
+                if (!this.form.clients[i].name) {
+                    alert(`请输入第 ${i + 1} 个客户的名称`);
+                    return false;
+                }
+            }
+
+            // Validate opposing parties
+            for (let i = 0; i < this.form.opposingParties.length; i++) {
+                if (!this.form.opposingParties[i].name) {
+                    alert(`请输入第 ${i + 1} 个对方当事人的名称`);
+                    return false;
+                }
+            }
+
             return true;
         }
     },
@@ -193,7 +232,7 @@ export default {
                                         <input type="text" v-model="form.judge" placeholder="请输入法官姓名" class="smart-input">
                                     </div>
                                     <div class="smart-form-group">
-                                        <label class="smart-label required">立案日期</label>
+                                        <label class="smart-label">立案日期</label>
                                         <input type="date" v-model="form.filingDate" class="smart-input">
                                     </div>
                                     <div class="smart-form-group">
@@ -215,46 +254,71 @@ export default {
                                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
                                     <!-- Client Side -->
                                     <div>
-                                        <h4 style="margin-bottom: 16px; font-size: 14px; color: #666;">我方客户</h4>
-                                        <div class="smart-form-group">
-                                            <label class="smart-label">名称/姓名</label>
-                                            <input type="text" v-model="form.clientName" class="smart-input">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                            <h4 style="margin: 0; font-size: 14px; color: #666;">我方客户</h4>
+                                            <button type="button" @click="addClient" style="background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 4px;">
+                                                <i class="fas fa-plus-circle"></i> 添加
+                                            </button>
                                         </div>
-                                        <div class="smart-form-group">
-                                            <label class="smart-label">主体类型</label>
-                                            <select v-model="form.clientType" class="smart-select">
-                                                <option value="individual">自然人</option>
-                                                <option value="company">法人企业</option>
-                                                <option value="org">非法人组织</option>
-                                            </select>
-                                        </div>
-                                        <div class="smart-form-group">
-                                            <label class="smart-label">证件号码/信用代码</label>
-                                            <input type="text" v-model="form.clientId" class="smart-input">
+                                        
+                                        <div v-for="(client, index) in form.clients" :key="'client-'+index" style="background: #f9fafb; padding: 16px; border-radius: 8px; margin-bottom: 16px; position: relative;">
+                                            <button v-if="form.clients.length > 1" type="button" @click="removeClient(index)" style="position: absolute; top: 8px; right: 8px; background: none; border: none; color: #ef4444; cursor: pointer;">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+                                            
+                                            <div class="smart-form-group">
+                                                <label class="smart-label required">名称/姓名</label>
+                                                <input type="text" v-model="client.name" class="smart-input">
+                                            </div>
+                                            <div class="smart-form-group">
+                                                <label class="smart-label">主体类型</label>
+                                                <select v-model="client.type" class="smart-select">
+                                                    <option value="individual">自然人</option>
+                                                    <option value="company">法人企业</option>
+                                                    <option value="org">非法人组织</option>
+                                                </select>
+                                            </div>
+                                            <div class="smart-form-group" style="margin-bottom: 0;">
+                                                <label class="smart-label">证件号码/信用代码</label>
+                                                <input type="text" v-model="client.id" class="smart-input">
+                                            </div>
                                         </div>
                                     </div>
+
                                     <!-- Opposing Side -->
                                     <div>
-                                        <h4 style="margin-bottom: 16px; font-size: 14px; color: #666;">对方当事人</h4>
-                                        <div class="smart-form-group">
-                                            <label class="smart-label">名称/姓名</label>
-                                            <input type="text" v-model="form.opposingName" class="smart-input">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                                            <h4 style="margin: 0; font-size: 14px; color: #666;">对方当事人</h4>
+                                            <button type="button" @click="addOpposingParty" style="background: none; border: none; color: #2563eb; cursor: pointer; font-size: 13px; display: flex; align-items: center; gap: 4px;">
+                                                <i class="fas fa-plus-circle"></i> 添加
+                                            </button>
                                         </div>
-                                        <div class="smart-form-group">
-                                            <label class="smart-label">主体类型</label>
-                                            <select v-model="form.opposingType" class="smart-select">
-                                                <option value="individual">自然人</option>
-                                                <option value="company">法人企业</option>
-                                                <option value="org">非法人组织</option>
-                                            </select>
-                                        </div>
-                                        <div class="smart-form-group">
-                                            <label class="smart-label">法定代表人</label>
-                                            <input type="text" v-model="form.opposingRep" class="smart-input">
-                                        </div>
-                                        <div class="smart-form-group">
-                                            <label class="smart-label">对方代理律师</label>
-                                            <input type="text" v-model="form.opposingCounsel" class="smart-input">
+
+                                        <div v-for="(party, index) in form.opposingParties" :key="'opposing-'+index" style="background: #f9fafb; padding: 16px; border-radius: 8px; margin-bottom: 16px; position: relative;">
+                                            <button v-if="form.opposingParties.length > 1" type="button" @click="removeOpposingParty(index)" style="position: absolute; top: 8px; right: 8px; background: none; border: none; color: #ef4444; cursor: pointer;">
+                                                <i class="fas fa-trash-alt"></i>
+                                            </button>
+
+                                            <div class="smart-form-group">
+                                                <label class="smart-label required">名称/姓名</label>
+                                                <input type="text" v-model="party.name" class="smart-input">
+                                            </div>
+                                            <div class="smart-form-group">
+                                                <label class="smart-label">主体类型</label>
+                                                <select v-model="party.type" class="smart-select">
+                                                    <option value="individual">自然人</option>
+                                                    <option value="company">法人企业</option>
+                                                    <option value="org">非法人组织</option>
+                                                </select>
+                                            </div>
+                                            <div class="smart-form-group">
+                                                <label class="smart-label">法定代表人</label>
+                                                <input type="text" v-model="party.rep" class="smart-input">
+                                            </div>
+                                            <div class="smart-form-group" style="margin-bottom: 0;">
+                                                <label class="smart-label">对方代理律师</label>
+                                                <input type="text" v-model="party.counsel" class="smart-input">
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -271,7 +335,7 @@ export default {
                             <div class="smart-card-content">
                                 <div class="smart-form-group full-width">
                                     <label class="smart-label">案情摘要</label>
-                                    <textarea v-model="form.description" class="smart-textarea" rows="4" placeholder="请输入案件的详细背景和经过..."></textarea>
+                                    <textarea v-model="form.description" class="smart-textarea" rows="4" placeholder="请输入案件的详细背景和经过..." style="border: 1px solid #ccc;"></textarea>
                                 </div>
                                 <div class="smart-form-group full-width">
                                     <label class="smart-label">争议焦点</label>
@@ -279,7 +343,7 @@ export default {
                                 </div>
                                 <div class="smart-form-group full-width">
                                     <label class="smart-label">客户诉求</label>
-                                    <textarea v-model="form.objective" class="smart-textarea" rows="2" placeholder="请输入客户的具体诉求..."></textarea>
+                                    <textarea v-model="form.objective" class="smart-textarea" rows="2" placeholder="请输入客户的具体诉求..." style="border: 1px solid #ccc;"></textarea>
                                 </div>
                             </div>
                         </div>
@@ -308,6 +372,39 @@ export default {
                                     <div class="smart-form-group">
                                         <label class="smart-label">计费时长 (小时)</label>
                                         <input type="number" v-model="form.billableHours" placeholder="0.0" class="smart-input">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 5. 联络人信息 -->
+                        <div class="smart-card" style="margin-bottom: 24px; box-shadow: none; border: 1px solid #e5e5e5;">
+                            <div class="card-header" style="padding: 15px 20px; border-bottom: 1px solid #e5e5e5; background: #fafafa;">
+                                <div class="card-title" style="font-size: 15px; font-weight: 600;">
+                                    <i class="fas fa-address-book" style="margin-right: 8px; color: #1a1a1a;"></i>联络人信息
+                                </div>
+                            </div>
+                            <div class="smart-card-content">
+                                <div class="smart-form-grid">
+                                    <div class="smart-form-group">
+                                        <label class="smart-label">姓名</label>
+                                        <input type="text" v-model="form.contactName" placeholder="请输入联络人姓名" class="smart-input">
+                                    </div>
+                                    <div class="smart-form-group">
+                                        <label class="smart-label">职位/角色</label>
+                                        <input type="text" v-model="form.contactRole" placeholder="请输入职位或角色" class="smart-input">
+                                    </div>
+                                    <div class="smart-form-group">
+                                        <label class="smart-label">电话</label>
+                                        <input type="text" v-model="form.contactPhone" placeholder="请输入联系电话" class="smart-input">
+                                    </div>
+                                    <div class="smart-form-group">
+                                        <label class="smart-label">邮箱</label>
+                                        <input type="email" v-model="form.contactEmail" placeholder="请输入邮箱地址" class="smart-input">
+                                    </div>
+                                    <div class="smart-form-group full-width">
+                                        <label class="smart-label">地址</label>
+                                        <input type="text" v-model="form.contactAddress" placeholder="请输入联系地址" class="smart-input">
                                     </div>
                                 </div>
                             </div>
