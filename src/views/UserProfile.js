@@ -70,11 +70,6 @@ export default {
             <div class="smart-container">
                 <div class="smart-header">
                     <div class="header-left">
-                        <div class="smart-breadcrumb">
-                            <span class="breadcrumb-item">工作台</span>
-                            <i class="fas fa-chevron-right separator"></i>
-                            <span class="breadcrumb-item active">个人资料</span>
-                        </div>
                         <h1 class="page-title">个人资料管理</h1>
                     </div>
                 </div>
