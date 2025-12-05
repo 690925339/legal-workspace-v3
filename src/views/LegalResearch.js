@@ -36,8 +36,12 @@ export default {
         },
         handleSearch() {
             if (!this.searchQuery.trim()) return;
-            console.log('Search with filters:', this.filters);
-            alert('搜索功能开发中: ' + this.searchQuery);
+            // 根据当前tab跳转到不同的结果页
+            if (this.activeTab === 'cases') {
+                router.push(`/case-search-results?q=${encodeURIComponent(this.searchQuery)}`);
+            } else if (this.activeTab === 'regulations') {
+                router.push(`/regulation-search-results?q=${encodeURIComponent(this.searchQuery)}`);
+            }
         },
         toggleFilters() {
             this.showFilters = !this.showFilters;

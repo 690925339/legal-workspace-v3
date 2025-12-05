@@ -9,7 +9,11 @@ import Login from './views/Login.js';
 import Register from './views/Register.js';
 import CaseForm from './views/CaseForm.js';
 import ContractReview from './views/ContractReview.js';
+import ContractReviewResult from './views/ContractReviewResult.js';
 import LegalResearch from './views/LegalResearch.js';
+import CaseSearchResults from './views/CaseSearchResults.js';
+import CaseDetailView from './views/CaseDetailView.js';
+import RegulationSearchResults from './views/RegulationSearchResults.js';
 
 import Settings from './views/Settings.js';
 import UserProfile from './views/UserProfile.js';
@@ -44,6 +48,18 @@ const App = {
             }
             if (path === '/legal-research') {
                 return 'LegalResearch';
+            }
+            if (path.startsWith('/case-search-results')) {
+                return 'CaseSearchResults';
+            }
+            if (path.startsWith('/case-detail-view')) {
+                return 'CaseDetailView';
+            }
+            if (path.startsWith('/regulation-search-results')) {
+                return 'RegulationSearchResults';
+            }
+            if (path.startsWith('/contract-review-result')) {
+                return 'ContractReviewResult';
             }
             if (path === '/settings') {
                 return 'Settings';
@@ -91,7 +107,11 @@ const App = {
         Register,
         CaseForm,
         ContractReview,
+        ContractReviewResult,
         LegalResearch,
+        CaseSearchResults,
+        CaseDetailView,
+        RegulationSearchResults,
         Settings,
         UserProfile,
         ProductFeedback
@@ -124,7 +144,11 @@ app.component('Login', Login);
 app.component('Register', Register);
 app.component('CaseForm', CaseForm);
 app.component('ContractReview', ContractReview);
+app.component('ContractReviewResult', ContractReviewResult);
 app.component('LegalResearch', LegalResearch);
+app.component('CaseSearchResults', CaseSearchResults);
+app.component('CaseDetailView', CaseDetailView);
+app.component('RegulationSearchResults', RegulationSearchResults);
 app.component('EvidenceUpload', EvidenceUpload);
 app.component('DocGenerate', DocGenerate);
 app.component('Settings', Settings);

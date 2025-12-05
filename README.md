@@ -110,9 +110,18 @@ legal-workspace-v3/
 │       ├── CaseList.js           # 案件列表
 │       ├── CaseDetail.js         # 案件详情
 │       ├── CaseForm.js           # 案件表单
-│       ├── LegalResearch.js      # 法律研究
 │       ├── EvidenceUpload.js     # 证据上传
-│       └── UserProfile.js        # 个人资料
+│       ├── LegalResearch.js      # 法律检索
+│       ├── CaseSearchResults.js  # 案例检索结果
+│       ├── CaseDetailView.js     # 案例详情查看
+│       ├── RegulationSearchResults.js # 法规检索结果
+│       ├── ContractReview.js     # 合同审查
+│       ├── DocGenerate.js        # 文书生成
+│       ├── UserProfile.js        # 个人资料
+│       ├── Settings.js           # 系统设置
+│       ├── ProductFeedback.js    # 产品反馈
+│       ├── Login.js              # 登录页
+│       └── Register.js           # 注册页
 ├── docs/                         # 文档
 │   ├── PRD.md                    # 产品需求文档
 │   ├── design-guidelines.md      # 设计规范
@@ -209,6 +218,35 @@ legal-workspace-v3/
 | [PRD.md](docs/PRD.md) | 产品需求文档 |
 | [design-guidelines.md](docs/design-guidelines.md) | UI/UX设计规范 |
 | [需求确认文档.md](docs/需求确认文档.md) | 需求调研文档 |
+
+## 🗺️ 路由说明
+
+| 路由路径 | 页面组件 | 说明 |
+|---------|---------|------|
+| `/` | CaseList | 案件列表（默认首页） |
+| `/case/:id` | CaseDetail | 案件详情页 |
+| `/case/new` | CaseForm | 新建案件表单 |
+| `/case/:id/edit` | CaseForm | 编辑案件表单 |
+| `/case/:id/evidence` | EvidenceUpload | 证据上传页 |
+| `/legal-research` | LegalResearch | 法律检索页 |
+| `/case-search-results?q=xxx` | CaseSearchResults | 案例检索结果页 |
+| `/regulation-search-results?q=xxx` | RegulationSearchResults | 法规检索结果页 |
+| `/contract-review` | ContractReview | 合同审查页 |
+| `/doc-generate` | DocGenerate | 文书生成页 |
+| `/settings` | Settings | 系统设置页 |
+| `/user-profile` | UserProfile | 个人资料页 |
+| `/product-feedback` | ProductFeedback | 产品反馈页 |
+| `/login` | Login | 登录页 |
+| `/register` | Register | 注册页 |
+
+### 模态框展示（无独立路由）
+
+以下功能通过模态框展示，不占用独立路由：
+
+| 功能 | 触发位置 | 说明 |
+|------|---------|------|
+| 案例详情查看 | 案例检索结果页 | 点击案例卡片弹出模态框，显示完整判决书原文 |
+| 法规详情查看 | 法规检索结果页 | 点击法规条目弹出模态框，左侧显示正文，右侧显示章节导航 |
 
 ## 🤝 贡献
 

@@ -75,6 +75,8 @@ export default {
             this.uploadedFile = file;
             this.fileName = file.name;
             this.fileSize = this.formatFileSize(file.size);
+            // 上传文件后直接跳转到审查结果页
+            router.push('/contract-review-result');
         },
         formatFileSize(bytes) {
             if (bytes === 0) return '0 Bytes';
@@ -91,11 +93,8 @@ export default {
                 alert('请先上传合同文件');
                 return;
             }
-            this.isAnalyzing = true;
-            setTimeout(() => {
-                this.isAnalyzing = false;
-                this.analysisComplete = true;
-            }, 2000);
+            // 跳转到合同审查结果页
+            router.push('/contract-review-result');
         },
         removeFile() {
             this.uploadedFile = null;
@@ -176,20 +175,6 @@ export default {
                                 <i class="fas fa-times"></i> 移除
                             </button>
                         </div>
-
-                        <div class="smart-card-footer">
-                            <div class="smart-tips">
-                                <i class="fas fa-lightbulb"></i>
-                                <span>AI 将自动识别合同类型并进行风险分析</span>
-                            </div>
-                            <button 
-                                class="smart-btn-primary"
-                                @click="startAnalysis"
-                                :disabled="!uploadedFile || isAnalyzing"
-                            >
-                                <i :class="isAnalyzing ? 'fas fa-spinner fa-spin' : 'fas fa-magic'"></i>
-                                {{ isAnalyzing ? '分析中...' : '开始审查' }}
-                            </button>
                         </div>
                     </div>
 

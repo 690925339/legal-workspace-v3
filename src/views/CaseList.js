@@ -183,10 +183,10 @@ export default {
                         >
                             <td>
                                 <div class="case-name">{{ caseItem.name }}</div>
-                                <div class="case-meta">
+                                <div class="case-meta" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                                     {{ caseItem.code }} · {{ caseItem.type }}
                                     <span v-if="caseItem.court" style="margin-left: 8px; color: var(--text-secondary);">
-                                        <i class="fas fa-balance-scale"></i> {{ caseItem.court }}
+                                        {{ caseItem.court }}
                                     </span>
                                 </div>
                             </td>
