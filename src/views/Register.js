@@ -1,4 +1,5 @@
 import { router } from '../router.js';
+import { authService } from '../config/supabase.js';
 
 export default {
     name: 'Register',
@@ -6,14 +7,60 @@ export default {
         return {
             name: '',
             email: '',
-            password: ''
+            password: '',
+            isLoading: false,
+            errorMessage: '',
+            successMessage: ''
         };
     },
     methods: {
-        handleRegister() {
-            // 简单验证后跳转到首页
-            if (this.name && this.email && this.password) {
-                router.push('/');
+        async handleRegister() {
+            if (!this.name || !this.email || !this.password) {
+                this.errorMessage = '请填写所有字段';
+                return;
+            }
+
+            if (this.password.length < 6) {
+                this.errorMessage = '密码长度至少为 6 位';
+                return;
+            }
+
+            this.isLoading = true;
+            this.errorMessage = '';
+            this.successMessage = '';
+
+            try {
+                const { data, error } = await authService.signUp(this.email, this.password, {
+                    full_name: this.name
+                });
+
+                if (error) {
+                    console.error('Registration error:', error);
+                    // 处理常见错误
+                    if (error.message.includes('already registered')) {
+                        this.errorMessage = '该邮箱已被注册';
+                    } else if (error.message.includes('Password should be')) {
+                        this.errorMessage = '密码格式不符合要求';
+                    } else {
+                        this.errorMessage = error.message || '注册失败，请重试';
+                    }
+                    return;
+                }
+
+                if (data.user) {
+                    console.log('Registration successful:', data.user);
+                    // 注册成功提示
+                    this.successMessage = '注册成功！正在跳转到登录页...';
+                    // 2秒后跳转到登录页
+                    setTimeout(() => {
+                        router.push('/login');
+                    }, 2000);
+                }
+            } catch (err) {
+                console.error('Unexpected error:', err);
+                this.errorMessage = '注册失败，请检查网络连接';
+            } finally {
+                this.isLoading = false;
             }
         }
     },
@@ -44,6 +91,16 @@ export default {
                     </div>
 
                     <form @submit.prevent="handleRegister">
+                        <!-- 错误提示 -->
+                        <div v-if="errorMessage" style="padding: 12px; background: #fee; border: 1px solid #fcc; border-radius: 6px; color: #c33; font-size: 14px; margin-bottom: 16px;">
+                            <i class="fas fa-exclamation-circle"></i> {{ errorMessage }}
+                        </div>
+
+                        <!-- 成功提示 -->
+                        <div v-if="successMessage" style="padding: 12px; background: #efe; border: 1px solid #cfc; border-radius: 6px; color: #3c3; font-size: 14px; margin-bottom: 16px;">
+                            <i class="fas fa-check-circle"></i> {{ successMessage }}
+                        </div>
+
                         <div class="form-group">
                             <label class="form-label">姓名</label>
                             <div class="input-wrapper">
@@ -53,6 +110,7 @@ export default {
                                     class="form-input" 
                                     placeholder="请输入您的姓名"
                                     v-model="name"
+                                    :disabled="isLoading"
                                     required
                                 >
                             </div>
@@ -67,6 +125,7 @@ export default {
                                     class="form-input" 
                                     placeholder="name@company.com"
                                     v-model="email"
+                                    :disabled="isLoading"
                                     required
                                 >
                             </div>
@@ -79,14 +138,18 @@ export default {
                                 <input 
                                     type="password" 
                                     class="form-input" 
-                                    placeholder="请创建密码"
+                                    placeholder="请创建密码（至少6位）"
                                     v-model="password"
+                                    :disabled="isLoading"
                                     required
                                 >
                             </div>
                         </div>
 
-                        <button type="submit" class="submit-btn">创建账号</button>
+                        <button type="submit" class="submit-btn" :disabled="isLoading">
+                            <span v-if="!isLoading">创建账号</span>
+                            <span v-else><i class="fas fa-spinner fa-spin"></i> 注册中...</span>
+                        </button>
                     </form>
 
                     <div class="form-footer">

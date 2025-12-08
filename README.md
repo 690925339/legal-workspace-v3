@@ -50,6 +50,10 @@
 - **结果分类** - 法规和案例分类展示
 
 ### 👤 用户管理
+- **用户认证** - 基于 Supabase 的安全认证系统
+  - 邮箱密码注册/登录
+  - 会话管理和状态持久化
+  - 密码重置功能
 - **个人资料管理** - 完整的个人信息编辑
 - **头像上传** - 支持自定义头像
 - **账号安全** - 密码修改功能
@@ -59,6 +63,7 @@
 | 技术 | 版本 | 用途 |
 |------|------|------|
 | Vue 3 | CDN | 前端框架 |
+| Supabase | 在线版 | 用户认证与数据库 |
 | D3.js | v7 | 数据可视化 |
 | Font Awesome | v6 | 图标库 |
 | CSS | 原生 | 样式设计 |
@@ -68,6 +73,7 @@
 ### 环境要求
 - Python 3.x (用于本地服务器)
 - 现代浏览器 (Chrome, Firefox, Safari, Edge)
+- Supabase 账号（用于用户认证）
 
 ### 本地运行
 
@@ -77,12 +83,25 @@ git clone https://github.com/690925339/legal-workspace-v3.git
 cd legal-workspace-v3
 ```
 
-2. **启动本地服务器**
+2. **配置 Supabase**
+
+编辑 `src/config/supabase.js`，填入您的 Supabase 项目信息：
+```javascript
+const SUPABASE_URL = 'your-project-url';
+const SUPABASE_ANON_KEY = 'your-anon-key';
+```
+
+获取方式：
+- 登录 [Supabase Dashboard](https://supabase.com)
+- 进入项目 Settings → API
+- 复制 Project URL 和 anon public key
+
+3. **启动本地服务器**
 ```bash
 python3 -m http.server 8080
 ```
 
-3. **在浏览器中访问**
+4. **在浏览器中访问**
 ```
 http://localhost:8080
 ```
@@ -102,10 +121,13 @@ legal-workspace-v3/
 ├── src/
 │   ├── main.js                   # 应用入口
 │   ├── router.js                 # 路由配置
+│   ├── config/
+│   │   └── supabase.js           # Supabase 配置
 │   ├── components/               # 组件
-│   │   └── layout/
-│   │       ├── AppLayout.js      # 主布局
-│   │       └── Sidebar.js        # 侧边栏导航
+│   │   ├── layout/
+│   │   │   ├── AppLayout.js      # 主布局
+│   │   │   └── Sidebar.js        # 侧边栏导航
+│   │   └── HistoryModal.js       # 历史记录模态框
 │   └── views/                    # 页面视图
 │       ├── CaseList.js           # 案件列表
 │       ├── CaseDetail.js         # 案件详情
@@ -174,7 +196,21 @@ legal-workspace-v3/
 
 ## 🔄 版本历史
 
-### v3.1 (2025-12-04) - 当前版本 ✨
+### v3.2 (2025-12-08) - 当前版本 ✨
+**用户认证系统**:
+- ✅ 集成 Supabase 在线版认证
+- ✅ 用户注册/登录功能
+- ✅ 会话管理和状态持久化
+- ✅ 错误处理和加载状态
+
+**历史记录功能**:
+- ✅ 通用历史记录模态框组件
+- ✅ 法律检索历史（案例/法规标签页）
+- ✅ 文书生成历史（起诉状/答辩状标签页）
+- ✅ 合同审查历史
+- ✅ 按日期倒序排列和筛选
+
+### v3.1 (2025-12-04)
 **案件状态流转优化**:
 - ✅ 新建案件：保存（草稿）/ 提交（进行中）双按钮
 - ✅ 结案功能移至案件列表操作栏
@@ -200,9 +236,10 @@ legal-workspace-v3/
 
 ## 🚧 开发计划
 
-### 近期计划 (v3.2)
-- [ ] 文书草拟功能
-- [ ] 合同审查功能
+### 近期计划 (v3.3)
+- [ ] 用户资料扩展（profiles 表）
+- [ ] 路由守卫和权限控制
+- [ ] 忘记密码功能
 - [ ] 文件预览功能
 - [ ] 证据时间轴编辑器
 
@@ -210,7 +247,7 @@ legal-workspace-v3/
 - [ ] 团队协作功能
 - [ ] 权限管理系统
 - [ ] 后端API集成
-- [ ] 数据持久化
+- [ ] 数据持久化到 Supabase
 
 ## 📚 文档
 
@@ -261,8 +298,8 @@ legal-workspace-v3/
 ---
 
 **开发团队**: Alpha&Leader Legal Tech  
-**最后更新**: 2025-12-04  
-**版本**: v3.1
+**最后更新**: 2025-12-08  
+**版本**: v3.2
 
 ---
 
