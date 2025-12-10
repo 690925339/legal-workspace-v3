@@ -6,6 +6,16 @@ export default {
         return {
             searchQuery: '',
             keywords: [],
+            // 筛选条件（从 URL 参数解析）
+            filterConditions: {
+                keywords: '',
+                courtLevel: '',
+                regions: [],       // 地域与法院（数组）
+                yearStart: '',
+                yearEnd: '',
+                procedures: [],    // 审判程序（数组）
+                docType: ''
+            },
             activeCategory: 'general',
             sortBy: 'relevance',
             showSortDropdown: false,
@@ -124,9 +134,22 @@ export default {
         };
     },
     mounted() {
-        // 从路由参数获取搜索关键词
+        // 从路由参数获取搜索关键词和筛选条件
         const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
         this.searchQuery = urlParams.get('q') || '';
+
+        // 解析筛选条件
+        this.filterConditions.keywords = urlParams.get('keywords') || '';
+        this.filterConditions.courtLevel = urlParams.get('courtLevel') || '';
+        // 解析数组参数（逗号分隔）
+        const regionsParam = urlParams.get('regions');
+        this.filterConditions.regions = regionsParam ? regionsParam.split(',') : [];
+        this.filterConditions.yearStart = urlParams.get('yearStart') || '';
+        this.filterConditions.yearEnd = urlParams.get('yearEnd') || '';
+        const proceduresParam = urlParams.get('procedures');
+        this.filterConditions.procedures = proceduresParam ? proceduresParam.split(',') : [];
+        this.filterConditions.docType = urlParams.get('docType') || '';
+
         if (this.searchQuery) {
             // 智能提取法律相关关键词
             this.keywords = this.extractLegalKeywords(this.searchQuery);
@@ -272,17 +295,66 @@ ${caseData.date}
                     </div>
                 </div>
 
-                <!-- 关键词标签 -->
+                <!-- 筛选条件标签 -->
                 <div style="padding: 16px 0; border-bottom: 1px solid #e5e5e5;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span style="color: #666; font-size: 14px;">关键词：</span>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <!-- 关键词 -->
+                        <div v-if="keywords.length > 0" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">关键词：</span>
                             <span 
                                 v-for="keyword in keywords" 
                                 :key="keyword"
                                 style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;"
                             >
                                 {{ keyword }}
+                            </span>
+                        </div>
+                        
+                        <!-- 法院层级 -->
+                        <div v-if="filterConditions.courtLevel" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">法院层级：</span>
+                            <span style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;">
+                                {{ filterConditions.courtLevel }}
+                            </span>
+                        </div>
+                        
+                        <!-- 地域与法院 -->
+                        <div v-if="filterConditions.regions.length > 0" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">地域与法院：</span>
+                            <span 
+                                v-for="region in filterConditions.regions" 
+                                :key="region"
+                                style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;"
+                            >
+                                {{ region }}
+                            </span>
+                        </div>
+                        
+                        <!-- 裁判年份 -->
+                        <div v-if="filterConditions.yearStart || filterConditions.yearEnd" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">裁判年份：</span>
+                            <span style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;">
+                                {{ filterConditions.yearStart || '...' }}-{{ filterConditions.yearEnd || '...' }}
+                            </span>
+                        </div>
+                        
+                        <!-- 审判程序 -->
+                        <div v-if="filterConditions.procedures.length > 0" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">审判程序：</span>
+                            <span 
+                                v-for="procedure in filterConditions.procedures" 
+                                :key="procedure"
+                                style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;"
+                            >
+                                {{ procedure }}
+                            </span>
+                        </div>
+                        
+                        <!-- 文书类型 -->
+                        <div v-if="filterConditions.docType" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">文书类型：</span>
+                            <span style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;">
+                                {{ filterConditions.docType }}
                             </span>
                         </div>
                     </div>

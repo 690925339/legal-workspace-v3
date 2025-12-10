@@ -111,7 +111,100 @@ export const authService = {
     }
 };
 
+// 筛选项服务
+export const filterService = {
+    // 获取案例检索筛选项
+    async getCaseFilterOptions() {
+        const supabase = getSupabaseClient();
+        if (!supabase) return { data: [], error: { message: 'Supabase client not initialized' } };
+
+        const { data, error } = await supabase
+            .from('search_filter_options')
+            .select('filter_key, label, value, display_order')
+            .eq('category', 'case')
+            .eq('is_active', true)
+            .order('display_order', { ascending: true });
+
+        return { data, error };
+    },
+
+    // 获取法规检索筛选项
+    async getRegulationFilterOptions() {
+        const supabase = getSupabaseClient();
+        if (!supabase) return { data: [], error: { message: 'Supabase client not initialized' } };
+
+        const { data, error } = await supabase
+            .from('search_filter_options')
+            .select('filter_key, label, value, display_order')
+            .eq('category', 'regulation')
+            .eq('is_active', true)
+            .order('display_order', { ascending: true });
+
+        return { data, error };
+    },
+
+    // 按 filter_key 分组获取筛选项
+    groupByFilterKey(options) {
+        if (!options) return {};
+        return options.reduce((acc, item) => {
+            if (!acc[item.filter_key]) {
+                acc[item.filter_key] = [];
+            }
+            acc[item.filter_key].push({ label: item.label, value: item.value });
+            return acc;
+        }, {});
+    }
+};
+
+// 品牌设置服务
+export const brandService = {
+    // 缓存品牌设置
+    _cache: null,
+    _cacheTime: null,
+    _cacheDuration: 5 * 60 * 1000, // 5分钟缓存
+
+    // 获取所有品牌设置
+    async getBrandSettings() {
+        // 检查缓存
+        if (this._cache && this._cacheTime && (Date.now() - this._cacheTime < this._cacheDuration)) {
+            return { data: this._cache, error: null };
+        }
+
+        const supabase = getSupabaseClient();
+        if (!supabase) return { data: {}, error: { message: 'Supabase client not initialized' } };
+
+        const { data, error } = await supabase
+            .from('brand_settings')
+            .select('setting_key, setting_value, setting_type');
+
+        if (!error && data) {
+            // 转换为键值对象
+            this._cache = data.reduce((acc, item) => {
+                acc[item.setting_key] = item.setting_value;
+                return acc;
+            }, {});
+            this._cacheTime = Date.now();
+        }
+
+        return { data: this._cache || {}, error };
+    },
+
+    // 获取单个设置
+    async getSetting(key, defaultValue = '') {
+        const { data } = await this.getBrandSettings();
+        return data[key] || defaultValue;
+    },
+
+    // 清除缓存
+    clearCache() {
+        this._cache = null;
+        this._cacheTime = null;
+    }
+};
+
 export default {
     getSupabaseClient,
-    authService
+    authService,
+    filterService,
+    brandService
 };

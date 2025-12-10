@@ -1,5 +1,5 @@
 import { router } from '../router.js';
-import { authService } from '../config/supabase.js';
+import { authService, brandService } from '../config/supabase.js';
 import { authStore } from '../store/authStore.js';
 
 export default {
@@ -10,10 +10,35 @@ export default {
             password: '',
             rememberMe: false,
             isLoading: false,
-            errorMessage: ''
+            errorMessage: '',
+            // 品牌设置
+            brand: {
+                name: 'ALPHA&LEADER',
+                subtitle: '安华理达',
+                slogan: 'AI 法律工作空间',
+                quote: '"迟来的正义即非正义"',
+                description: '体验 AI 驱动的法律工作空间，简化案件管理，智能分析文档，专注于最重要的事情。',
+                logoUrl: '',
+                logoText: 'LOGO'
+            }
         };
     },
+    async mounted() {
+        await this.loadBrandSettings();
+    },
     methods: {
+        async loadBrandSettings() {
+            const { data } = await brandService.getBrandSettings();
+            if (data) {
+                this.brand.name = data.brand_name || this.brand.name;
+                this.brand.subtitle = data.brand_subtitle || this.brand.subtitle;
+                this.brand.slogan = data.brand_slogan || this.brand.slogan;
+                this.brand.quote = data.brand_quote || this.brand.quote;
+                this.brand.description = data.brand_description || this.brand.description;
+                this.brand.logoUrl = data.logo_url || '';
+                this.brand.logoText = data.logo_text || 'LOGO';
+            }
+        },
         async handleLogin() {
             console.log('[Login] handleLogin called');
             if (!this.email || !this.password) {
@@ -67,15 +92,18 @@ export default {
                 <div class="brand-pattern"></div>
                 <div class="brand-content">
                     <div class="brand-logo">
-                        <div class="logo-box">LOGO</div>
+                        <div v-if="brand.logoUrl" class="logo-img">
+                            <img :src="brand.logoUrl" alt="Logo" style="max-height: 48px;">
+                        </div>
+                        <div v-else class="logo-box">{{ brand.logoText }}</div>
                         <div class="brand-text">
-                            <div class="brand-name">ALPHA&LEADER</div>
-                            <div class="brand-subtitle">安华理达</div>
+                            <div class="brand-name">{{ brand.name }}</div>
+                            <div class="brand-subtitle">{{ brand.subtitle }}</div>
                         </div>
                     </div>
-                    <div class="brand-quote">"迟来的正义即非正义"</div>
+                    <div class="brand-quote">{{ brand.quote }}</div>
                     <div class="brand-desc">
-                        体验 AI 驱动的法律工作空间，简化案件管理，智能分析文档，专注于最重要的事情。
+                        {{ brand.description }}
                     </div>
                 </div>
             </div>

@@ -1,5 +1,5 @@
 import { router } from '../router.js';
-import { authService } from '../config/supabase.js';
+import { authService, brandService } from '../config/supabase.js';
 
 export default {
     name: 'ForgotPassword',
@@ -8,10 +8,31 @@ export default {
             email: '',
             isLoading: false,
             errorMessage: '',
-            successMessage: ''
+            successMessage: '',
+            // 品牌设置
+            brand: {
+                name: 'ALPHA&LEADER',
+                subtitle: '安华理达',
+                quote: '"重置密码，重新开始"',
+                description: '输入您的邮箱地址，我们将向您发送密码重置链接。',
+                logoUrl: '',
+                logoText: 'LOGO'
+            }
         };
     },
+    async mounted() {
+        await this.loadBrandSettings();
+    },
     methods: {
+        async loadBrandSettings() {
+            const { data } = await brandService.getBrandSettings();
+            if (data) {
+                this.brand.name = data.brand_name || this.brand.name;
+                this.brand.subtitle = data.brand_subtitle || this.brand.subtitle;
+                this.brand.logoUrl = data.logo_url || '';
+                this.brand.logoText = data.logo_text || 'LOGO';
+            }
+        },
         async handleResetPassword() {
             if (!this.email) {
                 this.errorMessage = '请输入您的邮箱地址';
@@ -48,15 +69,18 @@ export default {
                 <div class="brand-pattern"></div>
                 <div class="brand-content">
                     <div class="brand-logo">
-                        <div class="logo-box">LOGO</div>
+                        <div v-if="brand.logoUrl" class="logo-img">
+                            <img :src="brand.logoUrl" alt="Logo" style="max-height: 48px;">
+                        </div>
+                        <div v-else class="logo-box">{{ brand.logoText }}</div>
                         <div class="brand-text">
-                            <div class="brand-name">ALPHA&LEADER</div>
-                            <div class="brand-subtitle">安华理达</div>
+                            <div class="brand-name">{{ brand.name }}</div>
+                            <div class="brand-subtitle">{{ brand.subtitle }}</div>
                         </div>
                     </div>
-                    <div class="brand-quote">"重置密码，重新开始"</div>
+                    <div class="brand-quote">{{ brand.quote }}</div>
                     <div class="brand-desc">
-                        输入您的邮箱地址，我们将向您发送密码重置链接。
+                        {{ brand.description }}
                     </div>
                 </div>
             </div>

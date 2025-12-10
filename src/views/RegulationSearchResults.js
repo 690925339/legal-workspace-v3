@@ -6,6 +6,17 @@ export default {
         return {
             searchQuery: '',
             keywords: [],
+            // 筛选条件（从 URL 参数解析）
+            filterConditions: {
+                keywords: '',
+                effectiveLevel: '',
+                issuingAuthority: '',
+                publishYearStart: '',
+                publishYearEnd: '',
+                effectiveYearStart: '',
+                effectiveYearEnd: '',
+                timeliness: ''
+            },
             sortBy: 'relevance',
             showSortDropdown: false,
             showEffectivenessDropdown: false,
@@ -59,6 +70,17 @@ export default {
     mounted() {
         const urlParams = new URLSearchParams(window.location.hash.split('?')[1]);
         this.searchQuery = urlParams.get('q') || '';
+
+        // 解析筛选条件
+        this.filterConditions.keywords = urlParams.get('keywords') || '';
+        this.filterConditions.effectiveLevel = urlParams.get('level') || '';
+        this.filterConditions.issuingAuthority = urlParams.get('issuingAuthority') || '';
+        this.filterConditions.publishYearStart = urlParams.get('publishYearStart') || '';
+        this.filterConditions.publishYearEnd = urlParams.get('publishYearEnd') || '';
+        this.filterConditions.effectiveYearStart = urlParams.get('effectiveYearStart') || '';
+        this.filterConditions.effectiveYearEnd = urlParams.get('effectiveYearEnd') || '';
+        this.filterConditions.timeliness = urlParams.get('timeliness') || '';
+
         if (this.searchQuery) {
             this.keywords = this.extractLegalKeywords(this.searchQuery);
         }
@@ -193,17 +215,66 @@ export default {
                     </div>
                 </div>
 
-                <!-- 关键词标签 -->
+                <!-- 筛选条件标签 -->
                 <div style="padding: 16px 0; border-bottom: 1px solid #e5e5e5;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <span style="color: #666; font-size: 14px;">关键词：</span>
-                        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                        <!-- 智能提取的关键词 -->
+                        <div v-if="keywords.length > 0" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">智能关键词：</span>
                             <span 
                                 v-for="keyword in keywords" 
                                 :key="keyword"
                                 style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;"
                             >
                                 {{ keyword }}
+                            </span>
+                        </div>
+                        
+                        <!-- 手动输入的关键词 -->
+                        <div v-if="filterConditions.keywords" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">关键词：</span>
+                            <span style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;">
+                                {{ filterConditions.keywords }}
+                            </span>
+                        </div>
+
+                        <!-- 效力级别 -->
+                        <div v-if="filterConditions.effectiveLevel" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">效力级别：</span>
+                            <span style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;">
+                                {{ filterConditions.effectiveLevel }}
+                            </span>
+                        </div>
+
+                        <!-- 发文机关 -->
+                        <div v-if="filterConditions.issuingAuthority" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">发文机关：</span>
+                            <span style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;">
+                                {{ filterConditions.issuingAuthority }}
+                            </span>
+                        </div>
+
+                        <!-- 发布年份 -->
+                        <div v-if="filterConditions.publishYearStart || filterConditions.publishYearEnd" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">发布年份：</span>
+                            <span style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;">
+                                {{ filterConditions.publishYearStart || '...' }} - {{ filterConditions.publishYearEnd || '...' }}
+                            </span>
+                        </div>
+
+                        <!-- 实施年份 -->
+                        <div v-if="filterConditions.effectiveYearStart || filterConditions.effectiveYearEnd" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">实施年份：</span>
+                            <span style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;">
+                                {{ filterConditions.effectiveYearStart || '...' }} - {{ filterConditions.effectiveYearEnd || '...' }}
+                            </span>
+                        </div>
+
+                        <!-- 时效性 -->
+                        <div v-if="filterConditions.timeliness" style="display: flex; align-items: center; gap: 8px;">
+                            <span style="color: #666; font-size: 14px;">时效性：</span>
+                            <span style="padding: 4px 12px; background: #f5f5f5; border-radius: 4px; font-size: 14px; color: #1a1a1a;">
+                                {{ filterConditions.timeliness }}
                             </span>
                         </div>
                     </div>

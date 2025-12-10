@@ -1,6 +1,6 @@
 // Sidebar v2.0 - 包含文书生成功能
 import { router } from '../../router.js';
-import { authService } from '../../config/supabase.js';
+import { authService, brandService } from '../../config/supabase.js';
 import { authStore } from '../../store/authStore.js';
 import ProductFeedback from '../../views/ProductFeedback.js';
 
@@ -15,7 +15,14 @@ export default {
             showUserMenu: false,
             isCollapsed: false,
             showFeedbackModal: false,
-            authStore  // 引用全局认证状态
+            authStore,  // 引用全局认证状态
+            // 品牌设置
+            brand: {
+                name: 'ALPHA&LEADER',
+                subtitle: '安华理达',
+                logoUrl: '',
+                logoText: ''
+            }
         };
     },
     computed: {
@@ -39,7 +46,8 @@ export default {
             return authStore.avatarUrl || null;
         }
     },
-    mounted() {
+    async mounted() {
+        await this.loadBrandSettings();
         window.addEventListener('hashchange', () => {
             this.currentPath = window.location.hash.slice(1) || '/';
         });
@@ -52,6 +60,15 @@ export default {
         });
     },
     methods: {
+        async loadBrandSettings() {
+            const { data } = await brandService.getBrandSettings();
+            if (data) {
+                this.brand.name = data.brand_name || this.brand.name;
+                this.brand.subtitle = data.brand_subtitle || this.brand.subtitle;
+                this.brand.logoUrl = data.logo_url || '';
+                this.brand.logoText = data.logo_text || '';
+            }
+        },
         navigate(path) {
             router.push(path);
             this.showUserMenu = false;
@@ -68,23 +85,43 @@ export default {
         },
         async handleLogout() {
             this.showUserMenu = false;
-            const { error } = await authService.signOut();
-            if (error) {
-                console.error('Logout error:', error);
-                alert('登出失败，请重试');
+
+            try {
+                console.log('Logging out...');
+                const { error } = await authService.signOut();
+
+                if (error) {
+                    console.error('Logout error:', error);
+                    // 即使 Supabase 报错，也尝试清除本地状态
+                }
+
+                // 直接清除本地认证状态，不完全依赖 onAuthStateChange
+                authStore.clearAuth();
+
+                // 直接导航到登录页
+                window.location.hash = '/login';
+
+                console.log('Logout successful');
+            } catch (err) {
+                console.error('Logout failed:', err);
+                // 即使出错也强制清除状态并跳转
+                authStore.clearAuth();
+                window.location.hash = '/login';
             }
-            // onAuthStateChange in main.js will handle navigation to /login
         }
     },
     template: `
         <aside :class="['sidebar', { 'collapsed': isCollapsed }]">
             <div class="brand" style="position: relative; padding-right: 0;">
-                <div class="brand-icon">
+                <div v-if="brand.logoUrl" class="brand-icon">
+                    <img :src="brand.logoUrl" alt="Logo" style="max-width: 32px; max-height: 32px;">
+                </div>
+                <div v-else class="brand-icon">
                     <i class="fas fa-gavel"></i>
                 </div>
                 <div class="brand-text" v-show="!isCollapsed">
-                    <div class="brand-name">ALPHA&LEADER</div>
-                    <div class="brand-subtitle">安华理达</div>
+                    <div class="brand-name">{{ brand.name }}</div>
+                    <div class="brand-subtitle">{{ brand.subtitle }}</div>
                 </div>
                 
                 <!-- Collapse Toggle -->

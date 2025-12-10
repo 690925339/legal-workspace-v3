@@ -1,5 +1,5 @@
 import { router } from '../router.js';
-import { authService } from '../config/supabase.js';
+import { authService, brandService } from '../config/supabase.js';
 
 export default {
     name: 'Register',
@@ -10,10 +10,33 @@ export default {
             password: '',
             isLoading: false,
             errorMessage: '',
-            successMessage: ''
+            successMessage: '',
+            // 品牌设置
+            brand: {
+                name: 'ALPHA&LEADER',
+                subtitle: '安华理达',
+                quote: '"效率是把事情做对，效能是做对的事情"',
+                description: '加入数千名信赖 ALPHA&LEADER 管理法律实务的专业人士行列。',
+                logoUrl: '',
+                logoText: 'LOGO'
+            }
         };
     },
+    async mounted() {
+        await this.loadBrandSettings();
+    },
     methods: {
+        async loadBrandSettings() {
+            const { data } = await brandService.getBrandSettings();
+            if (data) {
+                this.brand.name = data.brand_name || this.brand.name;
+                this.brand.subtitle = data.brand_subtitle || this.brand.subtitle;
+                this.brand.quote = data.brand_quote_register || data.brand_quote || this.brand.quote;
+                this.brand.description = data.brand_description_register || this.brand.description;
+                this.brand.logoUrl = data.logo_url || '';
+                this.brand.logoText = data.logo_text || 'LOGO';
+            }
+        },
         async handleRegister() {
             if (!this.name || !this.email || !this.password) {
                 this.errorMessage = '请填写所有字段';
@@ -70,15 +93,18 @@ export default {
                 <div class="brand-pattern"></div>
                 <div class="brand-content">
                     <div class="brand-logo">
-                        <div class="logo-box">LOGO</div>
+                        <div v-if="brand.logoUrl" class="logo-img">
+                            <img :src="brand.logoUrl" alt="Logo" style="max-height: 48px;">
+                        </div>
+                        <div v-else class="logo-box">{{ brand.logoText }}</div>
                         <div class="brand-text">
-                            <div class="brand-name">ALPHA&LEADER</div>
-                            <div class="brand-subtitle">安华理达</div>
+                            <div class="brand-name">{{ brand.name }}</div>
+                            <div class="brand-subtitle">{{ brand.subtitle }}</div>
                         </div>
                     </div>
-                    <div class="brand-quote">"效率是把事情做对，效能是做对的事情"</div>
+                    <div class="brand-quote">{{ brand.quote }}</div>
                     <div class="brand-desc">
-                        加入数千名信赖 ALPHA&LEADER 管理法律实务的专业人士行列。
+                        {{ brand.description }}
                     </div>
                 </div>
             </div>
