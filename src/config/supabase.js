@@ -10,11 +10,19 @@ let supabaseClient = null;
 
 export function getSupabaseClient() {
     if (!supabaseClient) {
+        // 检查 Supabase 库是否加载
         if (typeof window.supabase === 'undefined') {
-            console.error('Supabase library not loaded. Please include the Supabase JS CDN in your HTML.');
+            console.error('❌ Supabase library not loaded. Please check network connection.');
             return null;
         }
-        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        try {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            console.log('✅ Supabase client initialized');
+        } catch (error) {
+            console.error('❌ Failed to create Supabase client:', error);
+            return null;
+        }
     }
     return supabaseClient;
 }
