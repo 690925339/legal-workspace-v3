@@ -31,8 +31,12 @@ export default {
             return '用户';
         },
         userRole() {
-            // 从用户元数据中获取角色，如果没有则显示默认值
-            return authStore.user?.user_metadata?.role || '律师';
+            // 优先使用 authStore 中同步的职位，否则从 user_metadata 获取
+            return authStore.title || authStore.user?.user_metadata?.title || '律师';
+        },
+        userAvatar() {
+            // 从 authStore 获取头像 URL
+            return authStore.avatarUrl || null;
         }
     },
     mounted() {
@@ -186,7 +190,8 @@ export default {
 
                 <a @click.prevent="toggleUserMenu" class="user-profile" style="cursor: pointer;">
                     <div class="user-avatar">
-                        <i class="fas fa-user"></i>
+                        <img v-if="userAvatar" :src="userAvatar" alt="头像" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">
+                        <i v-else class="fas fa-user"></i>
                     </div>
                     <div class="user-info" v-show="!isCollapsed">
                         <div class="user-name">{{ userName }}</div>

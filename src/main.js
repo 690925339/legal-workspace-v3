@@ -1,5 +1,5 @@
 import { router } from './router.js';
-import { authService } from './config/supabase.js';
+import { authService, getSupabaseClient } from './config/supabase.js';
 import { authStore } from './store/authStore.js';
 import AppLayout from './components/layout/AppLayout.js';
 import Sidebar from './components/layout/Sidebar.js';
@@ -23,12 +23,43 @@ import UserProfile from './views/UserProfile.js';
 import ProductFeedback from './views/ProductFeedback.js';
 import HistoryModal from './components/HistoryModal.js';
 
+// 加载用户资料（头像、职位等）
+async function loadUserProfile(userId) {
+    try {
+        const supabase = getSupabaseClient();
+        if (!supabase || !userId) return;
+
+        const { data: profile, error } = await supabase
+            .from('profiles')
+            .select('avatar_url, title')
+            .eq('id', userId)
+            .single();
+
+        if (!error && profile) {
+            if (profile.avatar_url) {
+                authStore.setAvatarUrl(profile.avatar_url);
+            }
+            if (profile.title) {
+                authStore.setTitle(profile.title);
+            }
+            console.log('User profile loaded: avatar and title synced');
+        }
+    } catch (err) {
+        console.error('Failed to load user profile:', err);
+    }
+}
+
 // 初始化认证状态
 (async () => {
     // 获取当前会话
     const { data: { session } } = await authService.getSession();
     authStore.setAuth(session);
     console.log('Auth state updated:', session?.user?.email);
+
+    // 如果已登录，加载用户资料
+    if (session?.user?.id) {
+        await loadUserProfile(session.user.id);
+    }
 
     // 监听认证状态变化
     authService.onAuthStateChange((event, session) => {
@@ -37,6 +68,12 @@ import HistoryModal from './components/HistoryModal.js';
         if (event === 'SIGNED_IN') {
             authStore.setAuth(session);
             console.log('Auth store updated, isAuthenticated:', authStore.isAuthenticated());
+
+            // 登录后加载用户资料（头像、职位）
+            if (session?.user?.id) {
+                loadUserProfile(session.user.id);
+            }
+
             // 使用 setTimeout 确保 Vue 响应式系统已处理状态变化
             setTimeout(() => {
                 console.log('Navigating to / after auth update');
@@ -52,6 +89,11 @@ import HistoryModal from './components/HistoryModal.js';
             // 初始会话事件 - 只更新状态，不导航
             authStore.setAuth(session);
             console.log('Initial session:', session?.user?.email);
+
+            // 初始会话也加载用户资料
+            if (session?.user?.id) {
+                loadUserProfile(session.user.id);
+            }
         }
     });
 })();

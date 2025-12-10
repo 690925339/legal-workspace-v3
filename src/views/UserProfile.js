@@ -82,6 +82,14 @@ export default {
                     this.user.bio = profile.bio || '';
                     this.user.avatar = profile.avatar_url || null;
 
+                    // 同步头像和职位到全局 authStore，让侧边栏也能显示
+                    if (profile.avatar_url) {
+                        authStore.setAvatarUrl(profile.avatar_url);
+                    }
+                    if (profile.title) {
+                        authStore.setTitle(profile.title);
+                    }
+
                     // 加载偏好设置
                     this.preferences.emailNotifications = profile.email_notifications ?? true;
                     this.preferences.smsNotifications = profile.sms_notifications ?? false;
@@ -153,6 +161,9 @@ export default {
                         title: this.user.title
                     };
                 }
+
+                // 同步职位到 authStore，让侧边栏立即更新
+                authStore.setTitle(this.user.title);
 
                 this.saveSuccess = true;
                 setTimeout(() => {
@@ -265,6 +276,10 @@ export default {
 
                 // 更新本地显示
                 this.user.avatar = avatarUrl;
+
+                // 同步更新全局 authStore，让侧边栏也能显示新头像
+                authStore.setAvatarUrl(avatarUrl);
+
                 alert('头像上传成功');
             } catch (err) {
                 console.error('Failed to upload avatar:', err);
