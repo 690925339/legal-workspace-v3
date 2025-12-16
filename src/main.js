@@ -1,16 +1,27 @@
+// SCSS 主文件
+import './styles/main.scss'
+
+// CSS 导入
+import '../assets/styles/main.css'
+import '../assets/styles/brand.css'
+import '../assets/styles/evidence.css'
+
+// Vue 和核心依赖
+import { createApp } from 'vue'
+
 import { router } from './router.js';
 import { authService, getSupabaseClient } from './config/supabase.js';
 import { authStore } from './store/authStore.js';
 import AppLayout from './components/layout/AppLayout.js';
-import Sidebar from './components/layout/Sidebar.js';
-import CaseList from './views/CaseList.js';
+import Sidebar from './components/layout/Sidebar.vue';
+import CaseList from './views/CaseList.vue';
 import CaseDetail from './views/CaseDetail.js';
 import EvidenceUpload from './views/EvidenceUpload.js';
 import DocGenerate from './views/DocGenerate.js';
-import Login from './views/Login.js';
-import Register from './views/Register.js';
-import ForgotPassword from './views/ForgotPassword.js';
-import CaseForm from './views/CaseForm.js';
+import Login from './views/Login.vue';
+import Register from './views/Register.vue';
+import ForgotPassword from './views/ForgotPassword.vue';
+import CaseForm from './views/CaseForm.vue';
 import ContractReview from './views/ContractReview.js';
 import ContractReviewResult from './views/ContractReviewResult.js';
 import LegalResearch from './views/LegalResearch.js';
@@ -21,7 +32,7 @@ import RegulationSearchResults from './views/RegulationSearchResults.js';
 import Settings from './views/Settings.js';
 import UserProfile from './views/UserProfile.js';
 import ProductFeedback from './views/ProductFeedback.js';
-import HistoryModal from './components/HistoryModal.js';
+import HistoryModal from './components/HistoryModal.vue';
 
 // 加载用户资料（头像、职位等）
 async function loadUserProfile(userId) {
@@ -97,8 +108,6 @@ async function loadUserProfile(userId) {
         }
     });
 })();
-
-const { createApp } = Vue;
 
 const App = {
     data() {

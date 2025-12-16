@@ -1,7 +1,11 @@
 import { router } from '../router.js';
+import HistoryModal from '../components/HistoryModal.vue';
 
 export default {
     name: 'DocGenerate',
+    components: {
+        HistoryModal
+    },
     data() {
         return {
             activeType: 'complaint',

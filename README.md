@@ -62,16 +62,19 @@
 
 | 技术 | 版本 | 用途 |
 |------|------|------|
-| Vue 3 | CDN | 前端框架 |
+| Vue 3 | 3.4.21 | 前端框架 (npm) |
+| Vite | 5.4.21 | 构建工具 |
 | Supabase | 在线版 | 用户认证与数据库 |
-| D3.js | v7 | 数据可视化 |
-| Font Awesome | v6 | 图标库 |
-| CSS | 原生 | 样式设计 |
+| D3.js | 7.8.5 | 数据可视化 (npm) |
+| Sass (SCSS) | 最新 | CSS 预处理器 |
+| Vitest | 最新 | 单元测试框架 |
+| ESLint + Prettier | 最新 | 代码质量工具 |
+| Font Awesome | v6 | 图标库 (CDN) |
 
 ## 🚀 快速开始
 
 ### 环境要求
-- Python 3.x (用于本地服务器)
+- Node.js v20+ (用于 npm 包管理)
 - 现代浏览器 (Chrome, Firefox, Safari, Edge)
 - Supabase 账号（用于用户认证）
 
@@ -83,7 +86,12 @@ git clone https://github.com/690925339/legal-workspace-v3.git
 cd legal-workspace-v3
 ```
 
-2. **配置 Supabase**
+2. **安装依赖**
+```bash
+npm install
+```
+
+3. **配置 Supabase**
 
 编辑 `src/config/supabase.js`，填入您的 Supabase 项目信息：
 ```javascript
@@ -96,14 +104,23 @@ const SUPABASE_ANON_KEY = 'your-anon-key';
 - 进入项目 Settings → API
 - 复制 Project URL 和 anon public key
 
-3. **启动本地服务器**
+4. **启动开发服务器**
 ```bash
-python3 -m http.server 8080
+npm run dev
 ```
 
-4. **在浏览器中访问**
+5. **在浏览器中访问**
 ```
 http://localhost:8080
+```
+
+### 其他命令
+
+```bash
+npm run build    # 生产构建
+npm run preview  # 预览生产构建
+npm run test     # 运行测试
+npm run lint     # 代码检查和修复
 ```
 
 ### 在线演示
@@ -115,13 +132,17 @@ http://localhost:8080
 ```
 legal-workspace-vue/
 ├── index.html                    # 入口文件
-├── check-syntax.js               # 语法检查工具
+├── package.json                  # npm 依赖配置
+├── vite.config.js                # Vite 构建配置
+├── vitest.config.js              # Vitest 测试配置
+├── .eslintrc.cjs                 # ESLint 配置
+├── .prettierrc                   # Prettier 配置
+├── postcss.config.js             # PostCSS 配置
 ├── assets/
 │   └── styles/
 │       ├── main.css              # 全局样式
 │       ├── brand.css             # 品牌样式
-│       ├── evidence.css          # 证据相关样式
-│       └── main.css.bak          # 样式备份
+│       └── evidence.css          # 证据相关样式
 ├── src/
 │   ├── main.js                   # 应用入口
 │   ├── router.js                 # 路由配置
@@ -129,54 +150,44 @@ legal-workspace-vue/
 │   │   └── supabase.js           # Supabase 配置
 │   ├── store/                    # 状态管理
 │   │   └── authStore.js          # 认证状态管理
+│   ├── styles/                   # SCSS 样式
+│   │   ├── _variables.scss       # 设计系统变量
+│   │   ├── _mixins.scss          # Mixins 工具
+│   │   ├── main.scss             # 主入口
+│   │   ├── base/                 # 基础样式
+│   │   └── components/           # 组件样式
 │   ├── components/               # 组件
 │   │   ├── layout/
 │   │   │   ├── AppLayout.js      # 主布局
-│   │   │   └── Sidebar.js        # 侧边栏导航
-│   │   └── HistoryModal.js       # 历史记录模态框
+│   │   │   └── Sidebar.vue       # 侧边栏导航 (SFC)
+│   │   └── HistoryModal.vue      # 历史记录模态框 (SFC)
 │   └── views/                    # 页面视图
-│       ├── CaseList.js           # 案件列表
+│       ├── Login.vue             # 登录页 (SFC)
+│       ├── Register.vue          # 注册页 (SFC)
+│       ├── ForgotPassword.vue    # 忘记密码 (SFC)
+│       ├── CaseList.vue          # 案件列表 (SFC)
+│       ├── CaseForm.vue          # 案件表单 (SFC)
 │       ├── CaseDetail.js         # 案件详情
-│       ├── CaseForm.js           # 案件表单
 │       ├── EvidenceUpload.js     # 证据上传
 │       ├── LegalResearch.js      # 法律检索
-│       ├── CaseSearchResults.js  # 案例检索结果
-│       ├── CaseDetailView.js     # 案例详情查看
-│       ├── RegulationSearchResults.js # 法规检索结果
 │       ├── ContractReview.js     # 合同审查
-│       ├── ContractReviewResult.js # 合同审查结果
-│       ├── DocGenerate.js        # 文书生成（起诉状、答辩状、报价书）
+│       ├── DocGenerate.js        # 文书生成
 │       ├── UserProfile.js        # 个人资料
 │       ├── Settings.js           # 系统设置
-│       ├── ProductFeedback.js    # 产品反馈
-│       ├── Login.js              # 登录页
-│       ├── Register.js           # 注册页
-│       ├── ForgotPassword.js     # 忘记密码
+│       ├── __tests__/            # 测试文件
+│       │   └── Login.test.js     # 登录组件测试
 │       └── refactor/             # 高级功能模块
-│           ├── AIAnalysis.js     # AI智能分析（胜诉率预测、风险识别）
-│           ├── AIAssistant.js    # AI对话助手（基于案件的智能问答）
-│           ├── RelationshipGraph.js # 关系洞察（D3.js关系图谱可视化）
-│           ├── EvidenceTimeline.js  # 证据时间轴（证据事件时间线）
-│           └── QuoteGenerator.js    # 生成报价书（法律服务报价书生成）
+│           ├── AIAnalysis.js     # AI智能分析
+│           ├── AIAssistant.js    # AI对话助手
+│           ├── RelationshipGraph.js # 关系洞察 (D3.js)
+│           ├── EvidenceTimeline.js  # 证据时间轴
+│           └── QuoteGenerator.js    # 报价书生成
 ├── docs/                         # 文档
 │   ├── PRD.md                    # 产品需求文档
-│   ├── design-guidelines.md      # 设计规范
-│   ├── 前端开发规范.md            # 前端开发规范
-│   ├── 需求确认文档.md            # 需求调研
-│   ├── 竞品调研报告.md            # 竞品调研
-│   ├── feedback-integration.md   # 反馈集成文档
-│   ├── RAGflow集成实现方案.md    # RAGflow集成方案
-│   ├── SUPABASE-TROUBLESHOOTING.md # Supabase故障排除
-│   ├── api/                      # API文档
-│   │   ├── 通义法睿-案例检索API对接文档.md
-│   │   ├── 通义法睿-法规检索API对接文档.md
-│   │   ├── 案例检索API与前端差异分析.md
-│   │   └── 法规检索API与前端差异分析.md
+│   ├── 架构设计文档.md        # 架构设计
+│   ├── 脚手架迁移方案.md        # Vite 迁移方案
+│   ├── sfc-migration-plan.md     # SFC 组件化计划
 │   └── sql/                      # 数据库脚本
-│       ├── README.md
-│       ├── brand_settings.sql
-│       ├── cases.sql
-│       └── product_feedback.sql
 └── README.md
 ```
 

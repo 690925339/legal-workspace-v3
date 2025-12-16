@@ -1,8 +1,12 @@
 import { router } from '../router.js';
 import { filterService } from '../config/supabase.js';
+import HistoryModal from '../components/HistoryModal.vue';
 
 export default {
     name: 'LegalResearch',
+    components: {
+        HistoryModal
+    },
     data() {
         return {
             activeTab: 'cases',

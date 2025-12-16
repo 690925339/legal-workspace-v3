@@ -1,23 +1,15 @@
 // Supabase 配置
+import { createClient } from '@supabase/supabase-js'
+
 const SUPABASE_URL = 'https://elykhwxnwtgsciivewoj.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_1U-aKMEefnRwmK01mDss-Q_ISAA_u3a';
-
-// 创建 Supabase 客户端
-// 注意：需要在 HTML 中引入 Supabase JS 库
-// <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 let supabaseClient = null;
 
 export function getSupabaseClient() {
     if (!supabaseClient) {
-        // 检查 Supabase 库是否加载
-        if (typeof window.supabase === 'undefined') {
-            console.error('❌ Supabase library not loaded. Please check network connection.');
-            return null;
-        }
-
         try {
-            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             console.log('✅ Supabase client initialized');
         } catch (error) {
             console.error('❌ Failed to create Supabase client:', error);

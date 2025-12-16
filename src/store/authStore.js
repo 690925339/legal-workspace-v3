@@ -1,5 +1,7 @@
 // 全局认证状态管理
-const authStore = Vue.reactive({
+import { reactive } from 'vue'
+
+const authStore = reactive({
     user: null,
     session: null,
     loading: true,
