@@ -4,6 +4,7 @@ import { fileURLToPath, URL } from 'node:url'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    base: '/legal-workspace-v3/',
     plugins: [vue()],
     resolve: {
         alias: {
