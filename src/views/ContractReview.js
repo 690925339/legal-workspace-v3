@@ -199,7 +199,6 @@ export default {
                                 <i class="fas fa-times"></i> 移除
                             </button>
                         </div>
-                        </div>
                     </div>
 
                     <!-- 审查结果 -->
